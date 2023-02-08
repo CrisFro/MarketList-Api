@@ -105,7 +105,7 @@ namespace MarketList_Api.Controllers
             return _context.Markets.Any(e => e.Id == id);
         }
 
-        [HttpGet("export")]
+        [HttpPost("export")]
         public IActionResult Export()
         {
             var csvFile = _context.ExportCsv();
