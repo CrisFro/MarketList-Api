@@ -26,7 +26,7 @@ namespace MarketList_Api.Data
 
             foreach (var item in markets)
             {
-                csv.AppendLine($"{item.ProductType.ToString()};" +
+                csv.AppendLine($"{item.ProductType};" +
                     $"{item.ProductDescription}");
             }
 
