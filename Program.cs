@@ -1,4 +1,5 @@
 using MarketList_Api.Data;
+using MarketList_Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MarketListDbContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IMarketInterface, MarketService>();
 
 //montando um serviço de conexão com o Angular
 

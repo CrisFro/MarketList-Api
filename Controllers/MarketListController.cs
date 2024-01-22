@@ -1,49 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using MarketList_Api.Models;
+using MarketList_Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MarketList_Api.Data;
-using MarketList_Api.Models;
+using System.Net.Http.Headers;
 
 namespace MarketList_Api.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class MarketListController : ControllerBase
     {
-        private readonly MarketListDbContext _context;
+        private readonly IMarketInterface _marketInterface;
 
-        public MarketListController(MarketListDbContext context)
+        public MarketListController(IMarketInterface marketInterface)
         {
-            _context = context;
+            _marketInterface = marketInterface;
         }
 
         // GET: api/MarketList
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Market>>> GetMarkets()
         {
-            return await _context.Markets.ToListAsync();
+            var markets = await _marketInterface.GetAllMarketsAsync();
+            return Ok(markets);
         }
 
         // GET: api/MarketList/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Market>> GetMarket(Guid id)
         {
-            var market = await _context.Markets.FindAsync(id);
+            var market = await _marketInterface.GetMarketByIdAsync(id);
 
             if (market == null)
             {
                 return NotFound();
             }
 
-            return market;
+            return Ok(market);
         }
 
         // PUT: api/MarketList/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMarket(Guid id, Market market)
         {
@@ -52,66 +48,70 @@ namespace MarketList_Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(market).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _marketInterface.UpdateMarketAsync(market);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MarketExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/MarketList
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Market>> PostMarket(Market market)
-        {
-            _context.Markets.Add(market);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMarket", new { id = market.Id }, market);
-        }
-
-        // DELETE: api/MarketList/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMarket(Guid id)
-        {
-            var market = await _context.Markets.FindAsync(id);
-            if (market == null)
+            catch (MarketNotFoundException)
             {
                 return NotFound();
             }
-
-            _context.Markets.Remove(market);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
-        private bool MarketExists(Guid id)
+        // POST: api/MarketList
+        [HttpPost]
+        public async Task<ActionResult<Market>> PostMarket(Market market)
         {
-            return _context.Markets.Any(e => e.Id == id);
+            await _marketInterface.AddMarketAsync(market);
+            return CreatedAtAction(nameof(GetMarket), new { id = market.Id }, market);
         }
+
+        // DELETE: api/MarketList/
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMarket(Guid id)
+        {
+            try
+            {
+                await _marketInterface.DeleteMarketAsync(id);
+                return NoContent();
+            }
+            catch (MarketNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
 
         [HttpPost("export")]
-        public IActionResult Export()
+        public async Task<IActionResult> Export()
         {
-            var csvFile = _context.ExportCsv();
+            try
+            {
+                var csvFileStream = await _marketInterface.ExportCsv();
 
-            return File(csvFile, "application/csv", "arquivo.csv");
+                var contentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = "arquivo.csv",
+                };
 
+                Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+
+                return File(csvFileStream, "application/csv");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
+
     }
 }

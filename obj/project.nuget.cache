@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "H50V/bM/Fpkp70MxUNsrWGiHXDXGRNIfYJ9NVAwzNKHlHaYlum6kApn24oxtpqP19Tzu4EHerKBmVElXNpS/zg==",
+  "dgSpecHash": "Rp7/5I6zFxRdbxz5GkKlw28kK1uElkrb1yv7xqQypwJS3R3/sL41EyLnv84nOAfLHwbvcGn9Y0u5npzVq5qBzA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Cristiane\\Desktop\\Exercícios\\MarketList-Api\\MarketList-Api\\MarketList-Api.csproj",
+  "projectFilePath": "D:\\Projetos\\MarketList-Api\\MarketList-Api\\MarketList-Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Cristiane\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Cristiane\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
