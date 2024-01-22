@@ -17,7 +17,6 @@ namespace MarketList_Api.Controllers
             _marketInterface = marketInterface;
         }
 
-        // GET: api/MarketList
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Market>>> GetMarkets()
         {
@@ -25,7 +24,6 @@ namespace MarketList_Api.Controllers
             return Ok(markets);
         }
 
-        // GET: api/MarketList/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Market>> GetMarket(Guid id)
         {
@@ -39,7 +37,6 @@ namespace MarketList_Api.Controllers
             return Ok(market);
         }
 
-        // PUT: api/MarketList/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMarket(Guid id, Market market)
         {
@@ -59,11 +56,10 @@ namespace MarketList_Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(500, "Erro do Servidor Interno");
             }
         }
 
-        // POST: api/MarketList
         [HttpPost]
         public async Task<ActionResult<Market>> PostMarket(Market market)
         {
@@ -71,7 +67,6 @@ namespace MarketList_Api.Controllers
             return CreatedAtAction(nameof(GetMarket), new { id = market.Id }, market);
         }
 
-        // DELETE: api/MarketList/
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarket(Guid id)
         {
@@ -86,7 +81,7 @@ namespace MarketList_Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(500, "Erro do Servidor Interno");
             }
         }
 
@@ -109,7 +104,7 @@ namespace MarketList_Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(500, "Erro do Servidor Interno");
             }
         }
 
